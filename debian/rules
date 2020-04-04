@@ -1,0 +1,39 @@
+#!/usr/bin/make -f
+
+PACKAGE_NAME = binutils-avr
+TOP_DIR=$(shell pwd)
+BUILD_DIR=$(TOP_DIR)/build
+INSTALL_DIR=$(TOP_DIR)/debian/$(PACKAGE_NAME)
+# tooldir is required, otherwise some files will be placed in /usr/avr
+# which is not a standard dir
+TOOLDIR=/usr
+export DEB_BUILD_MAINT_OPTIONS=hardening=-format
+
+%:
+	dh $@ -D$(SOURCE_DIR) -B$(BUILD_DIR) --parallel
+
+override_dh_auto_build:
+	$(MAKE) tooldir=$(TOOLDIR) -C$(BUILD_DIR)
+
+override_dh_auto_install:
+	$(MAKE) tooldir=$(TOOLDIR) install-strip -C$(BUILD_DIR) DESTDIR=$(INSTALL_DIR)
+	# remove conflicting symlinks
+	for bin in nm objcopy objdump ranlib strip readelf; do \
+		rm -f $(INSTALL_DIR)/usr/bin/$${bin}; \
+	done
+	# prefix ar, as with avr-
+	for bin in ar as; do \
+		rm -f $(INSTALL_DIR)/usr/bin/avr-$${bin}; \
+		mv $(INSTALL_DIR)/usr/bin/$${bin} $(INSTALL_DIR)/usr/bin/avr-$${bin}; \
+	done
+
+override_dh_builddeb:
+	dh_builddeb --destdir=$(TOP_DIR) -- -z9 -Zxz -Sextreme
+
+override_dh_auto_configure:
+	dh_auto_configure --							\
+	--with-gnu-ld \
+	--with-gnu-as \
+	--with-system-zlib \
+	--with-dwarf2 \
+	--target=avr

@@ -1,0 +1,18 @@
+Source: binutils-avr
+Section: devel
+Priority: extra
+Maintainer: admin <admin@devpkg.com>
+Build-Depends:
+ texinfo,
+ binutils,
+ debhelper,
+ zlib1g-dev,
+ libisl-dev
+Standards-Version: 3.9.6
+Homepage: https://www.gnu.org/software/binutils/
+
+Package: binutils-avr
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}, binutils-avr
+Suggests: binutils
+Description: Binary utilities supporting AVR targets
