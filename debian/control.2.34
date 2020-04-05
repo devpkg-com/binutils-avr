@@ -6,8 +6,7 @@ Build-Depends:
  texinfo,
  binutils,
  debhelper,
- zlib1g-dev,
- libisl-dev
+ zlib1g-dev
 Standards-Version: 3.9.6
 Homepage: https://www.gnu.org/software/binutils/
 
