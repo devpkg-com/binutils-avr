@@ -1,0 +1,45 @@
+name: Build
+
+on:
+  push:
+    paths:
+    - 'debian/**'
+    - 'Makefile'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: lukaszkostka/debian_binutils:${{ matrix.distro }}
+      env:
+        VERSION: ${{ matrix.version }}
+        DH_VERBOSE: 0
+    strategy:
+      matrix:
+        version:
+          - 2.34
+        distro:
+          - stretch
+          - buster
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Restore cache
+        uses: actions/cache@v1
+        with:
+          path: src
+          key: binutils-source-${{ matrix.version }}
+
+      - name: Build package
+        run: make deb
+
+      - name: Move artifacts
+        run: make artifacts
+        if: success()
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: binutils-avr-${{ matrix.distro }}
+          path: artifacts
+        if: success()
