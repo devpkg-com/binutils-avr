@@ -19,15 +19,15 @@ COPY sources.list /etc/apt/sources.list
 RUN apt-get update
 
 RUN apt-get install -y texinfo
+RUN apt-get install -y gcc-avr
 RUN apt-get install -y binutils
 RUN apt-get install -y zlib1g-dev
 RUN apt-get install -y tar
 RUN apt-get install -y build-essential
 RUN apt-get install -y debhelper
 RUN apt-get install -y wget
-RUN apt-get install -y ca-certificates
 
-RUN apt-get purge -y gnupg2 wget
+RUN apt-get purge -y gnupg2
 RUN apt-get -y autoremove
 RUN rm -fr /usr/share/locale/*
 RUN rm -fr /usr/share/doc/*
